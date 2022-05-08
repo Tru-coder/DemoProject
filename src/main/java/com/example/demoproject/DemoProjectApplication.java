@@ -30,7 +30,7 @@ public class DemoProjectApplication {
             StringWriter output = new StringWriter();
             pyInterp.setOut(output);
 
-            pyInterp.exec("print('Hello Baeldung Readers!!')");
+            pyInterp.exec("print('String to execute')");
         }
     }
     @Test
