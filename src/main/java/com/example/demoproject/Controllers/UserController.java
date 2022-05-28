@@ -4,11 +4,14 @@ import com.example.demoproject.Pojo.UserPojo.UserProfilePojo;
 import com.example.demoproject.Pojo.UserPojo.UserSignInPojo;
 import com.example.demoproject.Pojo.UserPojo.UserUpdatingPojo;
 import com.example.demoproject.Services.UserService.UserService;
+import com.example.demoproject.authentification.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 @RestController
@@ -16,7 +19,7 @@ import java.util.List;
 @RequestMapping("/user")
 public class UserController {
     private final UserService userService;
-
+    private final AuthService authService;
 
 
     @GetMapping("/list")
@@ -43,6 +46,9 @@ public class UserController {
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-
+    @GetMapping("/refreshtoken")
+    public void refreshtoken(HttpServletRequest request, HttpServletResponse response){
+        authService.refreshtoken(request, response);
+    }
 
 }

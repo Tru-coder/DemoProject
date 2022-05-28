@@ -5,18 +5,31 @@ import com.example.demoproject.Pojo.UserPojo.UserCreatingPojo;
 import com.example.demoproject.Pojo.UserPojo.UserProfilePojo;
 import com.example.demoproject.Pojo.UserPojo.UserSignInPojo;
 import com.example.demoproject.Pojo.UserPojo.UserUpdatingPojo;
+import com.example.demoproject.email.MailService;
 import com.sun.istack.NotNull;
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
+@Slf4j
 public class UserService {
     private final BasicUserService basicUserService;
+    private final MailService mailService;
+
+    public User getUser(String username){
+        return basicUserService.getUser(username);
+    }
 
     /**
      * Return all Users in database
@@ -49,7 +62,7 @@ public class UserService {
      * @return true if updating has been else false
      */
     public boolean updateUser(Long userId, @NotNull UserUpdatingPojo pojo) {
-        if (!this.IsNotNullFieldsUserCreatingPojo(pojo)){
+        if (!this.IsNotNullFieldsUserUpdatingPojo(pojo)){
             return false;
         }
         if (basicUserService.IsUserExists(pojo.getUsername())) {
@@ -73,10 +86,14 @@ public class UserService {
         if (basicUserService.IsUserExists(pojo.getUsername())) {
             return false; // user with this name was already created
         }
-        if (!this.IsNotNullFieldsUserCreatingPojo(pojo)){
+        if (!IsNotNullFieldsUserCreatingPojo(pojo)){
             return  false;
         }
+
         basicUserService.createUser(new User(pojo));
+
+        mailService.successfulRegistration(pojo);
+
         return true; // user created
 
     }
@@ -92,6 +109,7 @@ public class UserService {
         if (basicUserService.IsNotUserExists(pojo.getUsername())) {
             return false; // user not found in DB
         }
+        pojo.setPassword(basicUserService.encodePassword(pojo.getPassword()));
         return basicUserService
                 .getUser(pojo.getUsername())
                 .getPassword()
@@ -125,7 +143,7 @@ public class UserService {
                 .collect(Collectors.toList());
     }
 
-    private boolean IsNotNullFieldsUserCreatingPojo (UserCreatingPojo pojo){
+    private boolean IsNotNullFieldsUserCreatingPojo(UserCreatingPojo pojo){
         if (pojo.getUsername() == null){
             return false;
         }
@@ -137,7 +155,7 @@ public class UserService {
         }
         return true;
     }
-    private boolean IsNotNullFieldsUserCreatingPojo (UserUpdatingPojo pojo){
+    private boolean IsNotNullFieldsUserUpdatingPojo(UserUpdatingPojo pojo){
         if (pojo.getUsername() == null){
             return false;
         }
@@ -149,4 +167,7 @@ public class UserService {
         }
         return true;
     }
+
+
+
 }

@@ -41,10 +41,21 @@ public class User {
         this.password = pojo.getPassword();
 
     }
+
+    public User(String username, String password, Set<Role> roles) {
+        this.username = username;
+        this.password = password;
+        this.roles = roles;
+
+        this.email = null;
+    }
+
     @PrePersist
     public void initialize() {
         if (roles == null) {
             roles = Collections.singleton(Role.USER); //Collections.singleton(Role.USER) - создаёт set с одним значением user
         }
     }
+
+
 }

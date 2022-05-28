@@ -15,11 +15,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class LoginController {
     private final UserService userService;
 
-    @PostMapping("login")
-    public ResponseEntity<HttpStatus> signIn (@RequestBody UserSignInPojo pojo){
-        if(userService.SignIn(pojo)){
-            return new ResponseEntity<>(HttpStatus.OK);
-        }
-        return  new ResponseEntity<>(HttpStatus.NOT_FOUND);
-    }
+//    @PostMapping("/login")
+//    public ResponseEntity<HttpStatus> signIn (@RequestBody UserSignInPojo pojo){
+//        if(userService.SignIn(pojo)){
+//            return new ResponseEntity<>(HttpStatus.OK);
+//        }
+//        return  new ResponseEntity<>(HttpStatus.NOT_FOUND);
+//    }
 }
